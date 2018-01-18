@@ -30,7 +30,6 @@ public class LoadingWin extends JFrame {
 		}
 	}
 	void initWindow(){
-		//Changesssss
 		this.setSize(500,310);
 		this.setUndecorated(true);
 		this.setLocationRelativeTo(null);

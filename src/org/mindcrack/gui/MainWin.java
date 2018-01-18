@@ -9,7 +9,6 @@ import org.mindcrack.files.Configurations;
 
 @SuppressWarnings("serial")
 public class MainWin extends JFrame {
-	//TODO change
 	public JPanel mainPanel;
 	public LinkedList<Padder> padders;
 	public MainWin(){
