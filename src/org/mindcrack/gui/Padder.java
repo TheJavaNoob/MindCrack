@@ -150,7 +150,7 @@ public class Padder extends JPanel {
 						boolean mag_lr = Math.abs(stdR - padder.getX()) < Configurations.padder_align_min && inref_ud;
 						boolean mag_ud = Math.abs(stdD - padder.getY()) < Configurations.padder_align_min && inref_lr;
 						boolean mag_du = Math.abs(stdT - (padder.getY() + padder.getHeight())) < Configurations.padder_align_min && inref_lr;
-						if(stdL == padder.getX() + padder.getWidth()) {//Clipping state
+						if(stdL == padder.getX() + padder.getWidth() && inref_ud) {//Clipping state
 							if(Math.abs(e.getX() - (origin_win.x - stdL)) > limit)//Leaving
 								finX = stdL + (e.getX() - (origin_win.x - stdL));
 							else//Staying
@@ -161,7 +161,7 @@ public class Padder extends JPanel {
 							origin_win.x = e.getX() + padder.getX() + padder.getWidth();
 							clip_state = 1;
 						}
-						if(stdR == padder.getX()) {//Clipping state
+						if(stdR == padder.getX() && inref_ud) {//Clipping state
 							if(Math.abs(e.getX() - (origin_win.x - stdL)) > limit)//Leaving
 								finX =  stdL + (e.getX() - (origin_win.x - stdL));
 							else//Staying
@@ -172,7 +172,7 @@ public class Padder extends JPanel {
 							origin_win.x = e.getX() + padder.getX() - stdW;
 							clip_state = 1;
 						}
-						if(stdT == padder.getY() + padder.getHeight()) {//Clipping state
+						if(stdT == padder.getY() + padder.getHeight() && inref_ud) {//Clipping state
 							if(Math.abs(e.getY() - (origin_win.y - stdH)) > limit)//Leaving
 								finY = stdT + (e.getY() - (origin_win.y - stdT));
 							else//Staying
@@ -183,7 +183,7 @@ public class Padder extends JPanel {
 							origin_win.y = e.getY() + padder.getY() + padder.getHeight();
 							clip_state = 2;
 						}
-						if(stdD == padder.getY()) {//Clipping state
+						if(stdD == padder.getY() && inref_ud) {//Clipping state
 							if(Math.abs(e.getY() - (origin_win.y - stdT)) > limit)//Leaving
 								finY =  stdT + (e.getY() - (origin_win.y - stdT));
 							else//Staying
@@ -272,8 +272,7 @@ public class Padder extends JPanel {
 						for(Padder padder:Main.main_win.padders) {
 							if(padder.uuid == Padder.this.uuid)continue;
 							boolean inref = (Padder.this.getY() >= padder.getY() && Padder.this.getY() <= padder.getY() + padder.getHeight()) || (Padder.this.getY() + Padder.this.getHeight() <= padder.getY() + padder.getHeight() && Padder.this.getY() + Padder.this.getHeight() >= padder.getY());
-							boolean mag = Padder.this.getY() + Padder.this.getHeight() == padder.getY();
-							//TODO 2018-1-17
+							boolean mag = Padder.this.getY() + Padder.this.getHeight() == padder.getY() || padder.getY() + padder.getHeight() == Padder.this.getY();
 							if(inref) {
 								if(currX - (padder.getX() + padder.getWidth()) == 0) {//Clipping state
 									if(currX - stdX > limit)//Leaving
