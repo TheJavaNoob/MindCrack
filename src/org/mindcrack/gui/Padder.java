@@ -29,6 +29,7 @@ public class Padder extends JPanel {
 	JPanel head;
 	JPanel body;
 	JLabel control;
+	JPanel tabCont;
 	LinkedList<JPanel> tabs;
 	LinkedList<JPanel> containers;
 	JLabel left_comp;
@@ -309,25 +310,44 @@ public class Padder extends JPanel {
 					@Override
 					public void mouseDragged(MouseEvent e) {
 						int currX = e.getXOnScreen() - Main.main_win.getLocationOnScreen().x;
-						
-						//						for(Padder p:Main.main_win.padders) {
-//							boolean clip_right = Math.abs(currX - (p.getX() + p.getWidth())) < Configurations.padder_align_min;
-//							boolean clip_left = Math.abs(currX - p.getX()) < Configurations.padder_align_min;
-//							boolean inref_ud = (Padder.this.getY() > p.getY() && Padder.this.getY() < p.getY() + p.getHeight()) || (Padder.this.getY() + Padder.this.getHeight() < p.getY() + p.getHeight() && Padder.this.getY() + Padder.this.getHeight() > p.getY());
-//							if(inref_ud) {
-//								if(clip_left) {
-//									Padder.this.setSize(p.getX() - Padder.this.getX(), Padder.this.getHeight());
-//									right_comp.setLocation(p.getX(), 0);
-//									return;
-//								}else if(clip_right) {
-//									Padder.this.setSize(p.getX() + p.getWidth() - Padder.this.getX(), Padder.this.getHeight());
-//									right_comp.setLocation(p.getX() + p.getWidth(), 0);
-//									return;
-//								}
-//							}
-//						}
-						Padder.this.setSize(currX - Padder.this.getX(), Padder.this.getHeight());
-						right_comp.setLocation(currX, 0);
+						int finX = currX;
+						int stdR = Padder.this.getX() + Padder.this.getWidth();
+						int limit = Configurations.padder_align_min; 
+						if(stdR == Main.main_win.getWidth()) {//Clipping state
+							if((currX - Main.main_win.getWidth()) > limit)//Leaving
+								finX = currX;
+							else//Staying
+								finX = 0;
+						}else if(currX < limit) {//Entering
+							finX = 0;
+						}
+						for(Padder padder:Main.main_win.padders) {
+							if(padder.uuid == Padder.this.uuid)continue;
+							boolean inref = (Padder.this.getY() >= padder.getY() && Padder.this.getY() <= padder.getY() + padder.getHeight()) || (Padder.this.getY() + Padder.this.getHeight() <= padder.getY() + padder.getHeight() && Padder.this.getY() + Padder.this.getHeight() >= padder.getY());
+							boolean mag = Padder.this.getY() + Padder.this.getHeight() == padder.getY() || padder.getY() + padder.getHeight() == Padder.this.getY();
+							if(inref) {
+								if(currX - (padder.getX() + padder.getWidth()) == 0) {//Clipping state
+									if(currX - stdX > limit)//Leaving
+										finX = currX - stdX;
+									else//Staying
+										finX = padder.getX() + padder.getWidth();
+								}else if(Math.abs(currX - (padder.getX() + padder.getWidth())) < limit) {//Entering
+									finX = padder.getX() + padder.getWidth();
+								}
+							}
+							if(mag) {
+								if(currX - padder.getX() == 0) {//Clipping state
+									if(currX - stdX > limit)//Leaving
+										finX = currX - stdX;
+									else//Staying
+										finX = padder.getX();
+								}else if(Math.abs(currX - padder.getX()) < limit) {//Entering
+									finX = padder.getX();
+								}
+							}
+						}
+						Padder.this.setSize(Padder.this.getX() + Padder.this.getWidth() - finX, Padder.this.getHeight());
+						Padder.this.setLocation(finX, Padder.this.getY());
 					}
 				});
 				right_comp.setSize(2, 0);
@@ -374,8 +394,10 @@ public class Padder extends JPanel {
 			}
 		});
 	}
-	void addTab(MPanel tab) {
-		tabs.add(new Tab(tab));
+	void addTab(MPanel panel) {
+		Tab tab = new Tab(panel);
+		tabs.add(tab);
+		head.add(tab);
 	}
 	class Tab extends JPanel{
 		MPanel body;
@@ -383,6 +405,7 @@ public class Padder extends JPanel {
 		JLabel name;
 		JLabel close;
 		public Tab(MPanel panel) {
+			body = panel;
 			initPanel();
 		}
 		void initPanel() {
