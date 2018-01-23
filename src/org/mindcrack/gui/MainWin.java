@@ -1,10 +1,12 @@
 package org.mindcrack.gui;
 
+import java.io.File;
 import java.util.LinkedList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.mindcrack.editor.gui.GuiEditor;
 import org.mindcrack.files.Configurations;
 
 @SuppressWarnings("serial")
@@ -25,6 +27,8 @@ public class MainWin extends JFrame {
 		//Debug start
 			Padder padder = new Padder();
 			padder.setBounds(0,0,300,300);
+			GuiEditor editor = new GuiEditor(new File("main.mcf"));
+			padder.addTab(editor);
 			mainPanel.add(padder);
 			padders.add(padder);
 			Padder padder2 = new Padder();
