@@ -8,6 +8,7 @@ import org.mindcrack.gui.MPanel;
 
 public class GuiEditor extends MPanel {
 	String filename;
+//	Editor editor;
 	public GuiEditor(File file) {
 		filename = file.getName();
 //		System.out.println();

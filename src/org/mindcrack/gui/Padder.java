@@ -2,9 +2,11 @@ package org.mindcrack.gui;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -12,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.ImageObserver;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
@@ -37,6 +40,8 @@ public class Padder extends JPanel {
 	JLabel down_comp;
 	Point origin;
 	Point origin_win;
+	/** This is for a bug fixing where componentResized can only be called once */
+	boolean init = false;
 	public Padder(){
 		containers = new LinkedList<JPanel>();
 		origin = new Point();
@@ -151,6 +156,7 @@ public class Padder extends JPanel {
 						boolean mag_lr = Math.abs(stdR - padder.getX()) < Configurations.padder_align_min && inref_ud;
 						boolean mag_ud = Math.abs(stdD - padder.getY()) < Configurations.padder_align_min && inref_lr;
 						boolean mag_du = Math.abs(stdT - (padder.getY() + padder.getHeight())) < Configurations.padder_align_min && inref_lr;
+						//
 						if(stdL == padder.getX() + padder.getWidth() && inref_ud) {//Clipping state
 							if(Math.abs(e.getX() - (origin_win.x - stdL)) > limit)//Leaving
 								finX = stdL + (e.getX() - (origin_win.x - stdL));
@@ -173,7 +179,8 @@ public class Padder extends JPanel {
 							origin_win.x = e.getX() + padder.getX() - stdW;
 							clip_state = 1;
 						}
-						if(stdT == padder.getY() + padder.getHeight() && inref_ud) {//Clipping state
+						//Down - Up
+						if(stdT == padder.getY() + padder.getHeight() && inref_lr) {//Clipping state
 							if(Math.abs(e.getY() - (origin_win.y - stdH)) > limit)//Leaving
 								finY = stdT + (e.getY() - (origin_win.y - stdT));
 							else//Staying
@@ -184,7 +191,7 @@ public class Padder extends JPanel {
 							origin_win.y = e.getY() + padder.getY() + padder.getHeight();
 							clip_state = 2;
 						}
-						if(stdD == padder.getY() && inref_ud) {//Clipping state
+						if(stdD == padder.getY() && inref_lr) {//Clipping state
 							if(Math.abs(e.getY() - (origin_win.y - stdT)) > limit)//Leaving
 								finY =  stdT + (e.getY() - (origin_win.y - stdT));
 							else//Staying
@@ -300,7 +307,7 @@ public class Padder extends JPanel {
 					}
 				});
 				left_comp.setSize(2, 0);
-				left_comp.setBackground(Color.black);
+				left_comp.setBackground(Color.WHITE);
 				left_comp.setOpaque(true);
 				left_comp.setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
 				body.add(left_comp);
@@ -311,47 +318,48 @@ public class Padder extends JPanel {
 					public void mouseDragged(MouseEvent e) {
 						int currX = e.getXOnScreen() - Main.main_win.getLocationOnScreen().x;
 						int finX = currX;
-						int stdR = Padder.this.getX() + Padder.this.getWidth();
-						int limit = Configurations.padder_align_min; 
+						int stdR = Padder.this.getX() +Padder.this.getWidth();
+						int limit = Configurations.padder_align_min;
 						if(stdR == Main.main_win.getWidth()) {//Clipping state
-							if((currX - Main.main_win.getWidth()) > limit)//Leaving
+							if((currX - stdR) > limit)//Leaving
 								finX = currX;
 							else//Staying
-								finX = 0;
-						}else if(currX < limit) {//Entering
-							finX = 0;
+								finX = Main.main_win.getWidth();
+						}else if(Math.abs(currX - Main.main_win.getWidth()) < limit) {//Entering
+							System.out.println(21);
+							finX = Main.main_win.getWidth();
 						}
 						for(Padder padder:Main.main_win.padders) {
 							if(padder.uuid == Padder.this.uuid)continue;
 							boolean inref = (Padder.this.getY() >= padder.getY() && Padder.this.getY() <= padder.getY() + padder.getHeight()) || (Padder.this.getY() + Padder.this.getHeight() <= padder.getY() + padder.getHeight() && Padder.this.getY() + Padder.this.getHeight() >= padder.getY());
 							boolean mag = Padder.this.getY() + Padder.this.getHeight() == padder.getY() || padder.getY() + padder.getHeight() == Padder.this.getY();
 							if(inref) {
-								if(currX - (padder.getX() + padder.getWidth()) == 0) {//Clipping state
-									if(currX - stdX > limit)//Leaving
-										finX = currX - stdX;
-									else//Staying
-										finX = padder.getX() + padder.getWidth();
-								}else if(Math.abs(currX - (padder.getX() + padder.getWidth())) < limit) {//Entering
-									finX = padder.getX() + padder.getWidth();
-								}
-							}
-							if(mag) {
-								if(currX - padder.getX() == 0) {//Clipping state
-									if(currX - stdX > limit)//Leaving
-										finX = currX - stdX;
+								if(currX == padder.getX()) {//Clipping state
+									if(currX - stdR > limit)//Leaving
+										finX = currX;
 									else//Staying
 										finX = padder.getX();
 								}else if(Math.abs(currX - padder.getX()) < limit) {//Entering
 									finX = padder.getX();
 								}
 							}
+							if(mag) {
+								if(currX - padder.getX() - padder.getWidth() == 0) {//Clipping state
+									if(currX - stdR > limit)//Leaving
+										finX = currX;
+									else//Staying
+										finX = padder.getX() + padder.getWidth();
+								}else if(Math.abs(currX - padder.getX() - padder.getWidth()) < limit) {//Entering
+									finX = padder.getX() + padder.getWidth();
+								}
+							}
 						}
-						Padder.this.setSize(Padder.this.getX() + Padder.this.getWidth() - finX, Padder.this.getHeight());
-						Padder.this.setLocation(finX, Padder.this.getY());
+						Padder.this.setSize(finX - Padder.this.getX(), Padder.this.getHeight());
+//						Padder.this.setLocation(finX, Padder.this.getY());
 					}
 				});
 				right_comp.setSize(2, 0);
-				right_comp.setBackground(Color.black);
+				right_comp.setBackground(Color.white);
 				right_comp.setOpaque(true);
 				right_comp.setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
 				body.add(right_comp);
@@ -360,19 +368,58 @@ public class Padder extends JPanel {
 				down_comp.addMouseMotionListener(new MouseMotionAdapter() {
 					@Override
 					public void mouseDragged(MouseEvent e) {
-						int currY = e.getYOnScreen() - Main.main_win.getLocationOnScreen().y;
-						Padder.this.setSize(Padder.this.getWidth(), currY);
-						down_comp.setLocation(0, currY);
+						int currY = e.getYOnScreen() - Main.main_win.getLocationOnScreen().y - 27;
+						int finY = currY;
+						int stdD = Padder.this.getY() +Padder.this.getHeight();
+						int limit = Configurations.padder_align_min;
+						
+						if(stdD == Main.main_win.getWidth()) {//Clipping state
+							if((currY - stdD) > limit)//Leaving
+								finY = currY;
+							else//Staying
+								finY = Main.main_win.getHeight();
+						}else if(Math.abs(currY - Main.main_win.getHeight()) < limit + 36) {//Entering
+							finY = Main.main_win.getHeight();
+						}
+						for(Padder padder:Main.main_win.padders) {
+							if(padder.uuid == Padder.this.uuid)continue;
+							boolean inref = (Padder.this.getX() >= padder.getX() && Padder.this.getX() <= padder.getX() + padder.getWidth()) || (Padder.this.getX() + Padder.this.getWidth() <= padder.getX() + padder.getWidth() && Padder.this.getX() + Padder.this.getWidth() >= padder.getX());
+							boolean mag = Padder.this.getX() + Padder.this.getWidth() == padder.getX() || padder.getX() + padder.getWidth() == Padder.this.getX();
+							if(inref) {
+								if(stdD == padder.getY()) {//Clipping state
+									if(Math.abs(currY - stdD) > limit)//Leaving
+										finY = currY;
+									else//Staying
+										finY = padder.getY();
+								}else if(Math.abs(currY - padder.getY()) < limit) {//Entering
+									finY = padder.getY();
+								}
+							}
+							if(mag) {
+								if(currY - padder.getY() - padder.getWidth() == 0) {//Clipping state
+									if(currY - stdD > limit)//Leaving
+										finY = currY;
+									else//Staying
+										finY = padder.getY() + padder.getHeight();
+								}else if(Math.abs(currY - padder.getY() - padder.getHeight()) < limit) {//Entering
+									finY = padder.getY() + padder.getHeight();
+								}
+							}
+						}
+						
+						Padder.this.setSize(Padder.this.getWidth(), finY - Padder.this.getY());
+						down_comp.setLocation(0, Padder.this.getHeight() - 42);
+						
 					}
 				});
 				down_comp.setSize(0, 2);
-				down_comp.setBackground(Color.black);
+				down_comp.setBackground(Color.white);
 				down_comp.setOpaque(true);
 				down_comp.setCursor(new Cursor(Cursor.N_RESIZE_CURSOR));
 				body.add(down_comp);
 			}
 			add(body);
-			body.setBackground(Color.red);
+			body.setBackground(Color.WHITE);
 		}
 		this.addComponentListener(new ComponentAdapter(){
 			@Override public void componentResized(ComponentEvent e){
@@ -425,15 +472,18 @@ public class Padder extends JPanel {
 			}
 		}
 		@Override
-	    protected void paintComponent(Graphics g1) {
+		public void paint(Graphics g1) {
 			Graphics2D g = (Graphics2D) g1;
-	        super.paintComponent(g1);
 	        int height = getHeight();
-	        GradientPaint paint = new GradientPaint(0, 0, new Color(50,255,50), 0, height,
-	                new Color(200, 255, 200));
-	        g.setPaint(paint);
-	        RoundRectangle2D rect = new RoundRectangle2D.Double(0,0,getWidth(),getHeight(),10,10);
-	        g.fill(rect);
+	        g.setColor(Color.white);
+	        g.fillRoundRect(0,0,getWidth(),getHeight(),20,20);
+	        g.fillRect(-5, 35, 185, 5);
+	        //
+	        Image image = body.icon.getImage();
+	        g.drawImage(image, 5, 10, 20, 20, null);
+	        g.setColor(Color.black);
+	        g.setFont(new Font("arial", Font.PLAIN, 15));
+	        g.drawString("Hello", 30, 25);
 	    }
 	}
 }
