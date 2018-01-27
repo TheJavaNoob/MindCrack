@@ -14,7 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.RoundRectangle2D;
-import java.awt.image.ImageObserver;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
@@ -22,6 +21,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.mindcrack.editor.gui.toolbar.Toolbar;
+import org.mindcrack.editor.gui.toolbar.Toolkit;
 import org.mindcrack.files.Configurations;
 import org.mindcrack.main.Main;
 
@@ -49,6 +50,10 @@ public class Padder extends JPanel {
 		tabs = new LinkedList<JPanel>();
 		uuid = uuidbase++;
 		initTabbers();
+	}
+	public Padder(JPanel pane) {
+		this();
+		body = pane;
 	}
 	void initTabbers(){
 		setLayout(null);
@@ -89,7 +94,19 @@ public class Padder extends JPanel {
 						stdD = stdT + stdH;
 					int finX = stdL + (e.getX() - origin.x),
 						finY = stdT + (e.getY() - origin.y);
-//					int currX = finX, currY = finY;
+					//Check for toolbar
+					if(body instanceof Toolkit) {
+						for(Toolbar tb:Toolbar.toolbars) {
+							if(finY > tb.getY() && finY < tb.getY() + 40) {
+								((Toolkit)body).bar = tb;
+								((Toolkit)body).isWindow = false;
+								((Toolkit)body).findPlaceInBar(finX);
+								Padder.this.setVisible(false);
+								Main.main_win.padders.remove(Padder.this);
+							}
+						}
+					}
+					
 					int limit = Configurations.padder_align_min;
 					boolean clip_l = stdL < limit,
 							clip_r = Main.main_win.getWidth() - stdR < limit,
