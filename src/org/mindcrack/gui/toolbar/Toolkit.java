@@ -1,5 +1,6 @@
-package org.mindcrack.editor.gui.toolbar;
+package org.mindcrack.gui.toolbar;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -10,10 +11,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.mindcrack.files.Configurations;
 import org.mindcrack.gui.Padder;
 import org.mindcrack.main.Main;
 
+@SuppressWarnings("serial")
 public class Toolkit extends JPanel {
 	public boolean isWindow;
 	public Toolbar bar;
@@ -37,10 +38,18 @@ public class Toolkit extends JPanel {
 			mover.addMouseMotionListener(new MouseMotionAdapter() {
 				@Override
 				public void mouseDragged(MouseEvent e) {
-					if(e.getY() - origin.y > Configurations.padder_align_min && !isWindow) {
+					if(e.getY() - origin.y > 40 && !isWindow) {
 						isWindow = true;
 						mover.setVisible(false);
-						Main.main_win.add(new Padder(Toolkit.this));
+						bar.remove(Toolkit.this);
+						Padder np = new Padder(Toolkit.this);
+						np.setLocation(e.getXOnScreen() - Main.main_win.getX() - origin.x, e.getYOnScreen() - Main.main_win.getY() - origin.y);
+						np.setSize(Toolkit.this.getWidth(), 80);
+						setOpaque(true);
+						Toolkit.this.setBackground(Color.white);
+						Main.main_win.mainPanel.add(np);
+						Main.main_win.mainPanel.repaint();
+						bar.repaint();
 					}else {
 						findPlaceInBar(e.getX());
 					}

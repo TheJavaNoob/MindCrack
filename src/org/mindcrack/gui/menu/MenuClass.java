@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+@SuppressWarnings("serial")
 public abstract class MenuClass extends JMenu{
 	boolean expand = false;
 	public JPanel show;

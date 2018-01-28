@@ -1,4 +1,4 @@
-package org.mindcrack.editor.gui.toolbar;
+package org.mindcrack.gui.toolbar;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -8,9 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.LinkedList;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class Toolbar extends JPanel {
 	public static LinkedList<Toolbar> toolbars = new LinkedList<Toolbar>();
 	public LinkedList<Toolkit> toolkits = new LinkedList<Toolkit>();

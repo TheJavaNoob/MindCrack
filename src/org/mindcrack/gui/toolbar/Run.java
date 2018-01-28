@@ -1,8 +1,8 @@
-package org.mindcrack.editor.gui.toolbar;
+package org.mindcrack.gui.toolbar;
 
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 
+@SuppressWarnings("serial")
 public class Run extends Toolbar_Item {
 	public Run() {
 		super("res/run.png", "Run", true);

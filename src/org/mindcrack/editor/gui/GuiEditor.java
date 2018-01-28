@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 
 import org.mindcrack.gui.MPanel;
 
+@SuppressWarnings("serial")
 public class GuiEditor extends MPanel {
 	String filename;
 //	Editor editor;

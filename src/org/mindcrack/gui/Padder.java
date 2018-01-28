@@ -21,9 +21,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.mindcrack.editor.gui.toolbar.Toolbar;
-import org.mindcrack.editor.gui.toolbar.Toolkit;
 import org.mindcrack.files.Configurations;
+import org.mindcrack.gui.toolbar.Toolbar;
+import org.mindcrack.gui.toolbar.Toolkit;
 import org.mindcrack.main.Main;
 
 @SuppressWarnings("serial")
@@ -31,7 +31,7 @@ public class Padder extends JPanel {
 	static int uuidbase = 0;
 	int uuid;
 	JPanel head;
-	JPanel body;
+	public JPanel body;
 	JLabel control;
 	JPanel tabCont;
 	LinkedList<JPanel> tabs;
@@ -52,8 +52,13 @@ public class Padder extends JPanel {
 		initTabbers();
 	}
 	public Padder(JPanel pane) {
-		this();
 		body = pane;
+		containers = new LinkedList<JPanel>();
+		origin = new Point();
+		origin_win = new Point();
+		tabs = new LinkedList<JPanel>();
+		uuid = uuidbase++;
+		initTabbers();
 	}
 	void initTabbers(){
 		setLayout(null);
@@ -97,16 +102,16 @@ public class Padder extends JPanel {
 					//Check for toolbar
 					if(body instanceof Toolkit) {
 						for(Toolbar tb:Toolbar.toolbars) {
-							if(finY > tb.getY() && finY < tb.getY() + 40) {
+							if(finY + origin.y > tb.getY() && finY + origin.y < tb.getY() + 40) {
 								((Toolkit)body).bar = tb;
 								((Toolkit)body).isWindow = false;
 								((Toolkit)body).findPlaceInBar(finX);
+								tb.rearrange();
 								Padder.this.setVisible(false);
 								Main.main_win.padders.remove(Padder.this);
 							}
 						}
 					}
-					
 					int limit = Configurations.padder_align_min;
 					boolean clip_l = stdL < limit,
 							clip_r = Main.main_win.getWidth() - stdR < limit,
@@ -259,8 +264,8 @@ public class Padder extends JPanel {
 								origin_win.x = e.getX() + padder.getX() + padder.getWidth() - stdW;
 							}
 						}
-						Padder.this.setLocation(finX, finY);
 					}
+					Padder.this.setLocation(finX, finY);
 				}
 			});
 			control = new JLabel(new ImageIcon("res/controls.png"));{
@@ -275,7 +280,11 @@ public class Padder extends JPanel {
 				}
 			});
 		}
-		body = new JPanel();{
+		if(body == null) {
+			body = new JPanel();
+			System.out.println("New");
+		}
+		{
 			body.setLayout(null);
 			body.setLocation(0, 40);
 			left_comp = new JLabel();{
@@ -324,10 +333,9 @@ public class Padder extends JPanel {
 					}
 				});
 				left_comp.setSize(2, 0);
-				left_comp.setBackground(Color.WHITE);
-				left_comp.setOpaque(true);
+				left_comp.setOpaque(false);
 				left_comp.setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
-				body.add(left_comp);
+				add(left_comp);
 			}
 			right_comp = new JLabel();{
 				right_comp.addMouseMotionListener(new MouseMotionAdapter() {
@@ -376,10 +384,9 @@ public class Padder extends JPanel {
 					}
 				});
 				right_comp.setSize(2, 0);
-				right_comp.setBackground(Color.white);
-				right_comp.setOpaque(true);
+				right_comp.setOpaque(false);
 				right_comp.setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
-				body.add(right_comp);
+				add(right_comp);
 			}
 			down_comp = new JLabel();{
 				down_comp.addMouseMotionListener(new MouseMotionAdapter() {
@@ -424,16 +431,14 @@ public class Padder extends JPanel {
 							}
 						}
 						
-						Padder.this.setSize(Padder.this.getWidth(), finY - Padder.this.getY());
-						down_comp.setLocation(0, Padder.this.getHeight() - 42);
-						
+						Padder.this.setSize(Padder.this.getWidth(), finY - Padder.this.getY() - 32);
+						down_comp.setLocation(0, Padder.this.getHeight() - 2);
 					}
 				});
 				down_comp.setSize(0, 2);
-				down_comp.setBackground(Color.white);
-				down_comp.setOpaque(true);
+				down_comp.setOpaque(false);
 				down_comp.setCursor(new Cursor(Cursor.N_RESIZE_CURSOR));
-				body.add(down_comp);
+				add(down_comp);
 			}
 			add(body);
 			body.setBackground(Color.WHITE);
@@ -448,7 +453,7 @@ public class Padder extends JPanel {
 			    head.repaint();
 			    left_comp.setBounds(0, 0, 2,height);
 			    right_comp.setBounds(width - 2, 0, 2,height);
-			    down_comp.setBounds(0, height - 42, width, 2);
+			    down_comp.setBounds(0, height - 2, width, 2);
 			}
 		});
 		SwingUtilities.invokeLater(new Runnable() {
@@ -491,7 +496,6 @@ public class Padder extends JPanel {
 		@Override
 		public void paint(Graphics g1) {
 			Graphics2D g = (Graphics2D) g1;
-	        int height = getHeight();
 	        g.setColor(Color.white);
 	        g.fillRoundRect(0,0,getWidth(),getHeight(),20,20);
 	        g.fillRect(-5, 35, 185, 5);

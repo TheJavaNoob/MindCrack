@@ -1,4 +1,4 @@
-package org.mindcrack.editor.gui.toolbar;
+package org.mindcrack.gui.toolbar;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+@SuppressWarnings("serial")
 public abstract class Toolbar_Item extends JPanel {
 	public JLabel main;
 	public JLabel expand;

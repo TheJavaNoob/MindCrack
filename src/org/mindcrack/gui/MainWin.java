@@ -1,5 +1,6 @@
 package org.mindcrack.gui;
 
+import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.LinkedList;
@@ -7,9 +8,9 @@ import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.mindcrack.editor.gui.toolbar.Toolbar;
 import org.mindcrack.files.Configurations;
 import org.mindcrack.gui.menu.Menu;
+import org.mindcrack.gui.toolbar.Toolbar;
 
 @SuppressWarnings("serial")
 public class MainWin extends JFrame {
@@ -33,10 +34,11 @@ public class MainWin extends JFrame {
 		this.setBounds(Configurations.mainwin_left,Configurations.mainwin_top,Configurations.mainwin_width,Configurations.mainwin_height);
 		this.setVisible(true);
 		this.setTitle("Mindcrack IDE");
+		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		mainPanel = new JPanel();
-		mainPanel.setLayout(null);
-		add(mainPanel);
+			mainPanel.setLayout(null);
+		add(mainPanel, BorderLayout.CENTER);
 		this.setJMenuBar(menu = new Menu());
 		mainPanel.add(menu.file.show);
 		mainPanel.add(new Toolbar());

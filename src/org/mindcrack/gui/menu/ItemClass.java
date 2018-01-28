@@ -1,6 +1,5 @@
 package org.mindcrack.gui.menu;
 
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -8,6 +7,7 @@ import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public abstract class ItemClass extends JLabel implements MouseListener {
 	boolean entered;
 	ImageIcon image;
