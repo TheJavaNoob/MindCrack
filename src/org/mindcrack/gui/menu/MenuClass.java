@@ -12,8 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-import org.mindcrack.main.Main;
-
 @SuppressWarnings("serial")
 public abstract class MenuClass extends JMenu{
 	boolean expand = false;
@@ -58,10 +56,4 @@ public abstract class MenuClass extends JMenu{
 		show.add(item);
 	}
 	public abstract void addItems();
-//	@Override
-//	public void actionPerformed(ActionEvent e) {
-//		System.out.println("Invoked");
-//		expand = !expand;
-//		show.setVisible(expand);
-//	}
 }

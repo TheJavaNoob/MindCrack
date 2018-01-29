@@ -1,41 +1,43 @@
 package org.mindcrack.gui.menu;
 
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 @SuppressWarnings("serial")
-public abstract class ItemClass extends JLabel implements MouseListener {
+public abstract class ItemClass extends JLabel {
 	boolean entered;
 	ImageIcon image;
-	public ItemClass(String image, String tooltip) {
+	public ItemClass(String img, String tooltip) {
 		this.setSize(80, 80);
-		this.image = new ImageIcon(image);
+		this.image = new ImageIcon(img);
 		this.setIcon(this.image);
 		this.setToolTipText(tooltip);
-		this.addMouseListener(this);
-	}
+		this.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				image.setImage(image.getImage().getScaledInstance(100,100,Image.SCALE_DEFAULT));
+				ItemClass.this.setSize(100,100);
+				ItemClass.this.setIcon(image);
+			}
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		image.setImage(image.getImage().getScaledInstance(100,100,Image.SCALE_DEFAULT));
-		this.setSize(100,100);
-		this.setIcon(image);
-	}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				image.setImage(image.getImage().getScaledInstance(80,80,Image.SCALE_DEFAULT));
+				ItemClass.this.setSize(80, 80);
+				ItemClass.this.setIcon(image);
+			}
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		image.setImage(image.getImage().getScaledInstance(80,80,Image.SCALE_DEFAULT));
-		this.setSize(80, 80);
-		this.setIcon(image);
+			@Override
+			public void mousePressed(MouseEvent e) {
+				click();
+			}
+		});
 	}
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
-	@Override
-	public void mouseReleased(MouseEvent e) {
+	public void click() {
+		
 	}
 }

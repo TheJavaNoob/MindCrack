@@ -24,10 +24,14 @@ public abstract class Dialog extends JDialog {
 	}													
 	public void initDialog() {
       	this.setSize(500,600);
+      	this.setLocation(450,450);
 		this.setLayout(new BorderLayout());
+		top = new JPanel();
+			top.setLayout(null);
+		add(top, BorderLayout.CENTER);
 		bottom = new JPanel();
 		bottom.setLayout(new FlowLayout(FlowLayout.RIGHT));
-      	bottom.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));//TODO Border
+      	bottom.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
 			done = new JButton("Íê³É");
 				done.addMouseListener(new MouseAdapter(){
 					@Override
@@ -40,7 +44,7 @@ public abstract class Dialog extends JDialog {
 				done.addMouseListener(new MouseAdapter(){
 					@Override
 					public void mouseClicked(MouseEvent e){
-                      Dialog.this.setVisible(false);
+                      Dialog.this.dispose();
                     }
 				});
 			bottom.add(done);
