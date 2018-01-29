@@ -27,7 +27,7 @@ public class Toolkit extends JPanel {
 		origin = new Point();
 		this.setOpaque(false);
 		this.setLayout(new FlowLayout(FlowLayout.LEFT));
-		mover = new JLabel(new ImageIcon("res/toolkit.png"));
+		mover = new JLabel(new ImageIcon("res/toolbar/toolkit.png"));
 			mover.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {

@@ -16,7 +16,7 @@ import org.mindcrack.gui.toolbar.Toolbar;
 public class MainWin extends JFrame {
 	public JPanel mainPanel;
 	public LinkedList<Padder> padders;
-	Menu menu;
+	public Menu menu;
 	public MainWin(){
 		padders = new LinkedList<Padder>();
 		initWindow();
@@ -40,7 +40,11 @@ public class MainWin extends JFrame {
 			mainPanel.setLayout(null);
 		add(mainPanel, BorderLayout.CENTER);
 		this.setJMenuBar(menu = new Menu());
-		mainPanel.add(menu.file.show);
+		addMenu();
 		mainPanel.add(new Toolbar());
+	}
+	public void addMenu() {
+		mainPanel.add(menu.file.show);
+		mainPanel.add(menu.window.show);
 	}
 }

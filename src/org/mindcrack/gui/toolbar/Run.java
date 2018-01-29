@@ -5,7 +5,7 @@ import javax.swing.JMenuItem;
 @SuppressWarnings("serial")
 public class Run extends Toolbar_Item {
 	public Run() {
-		super("res/run.png", "Run", true);
+		super("res/toolbar/run.png", "Run", true);
 	}
 	@Override
 	public void click() {

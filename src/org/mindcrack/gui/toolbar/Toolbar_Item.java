@@ -42,7 +42,7 @@ public abstract class Toolbar_Item extends JPanel {
 			});
 		add(main);
 		if(hasSubItems) {
-			expand = new JLabel(new ImageIcon("res/arrow_down.png"));
+			expand = new JLabel(new ImageIcon("res/toolbar/arrow_down.png"));
 			expand.setOpaque(false);
 				expand.setBounds(20, 10, 20, 20);
 				expand.addMouseListener(new MouseAdapter() {

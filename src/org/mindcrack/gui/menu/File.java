@@ -9,7 +9,7 @@ public class File extends MenuClass {
 	}
 	@Override
 	public void addItems() {
-		ItemClass new_project = new ItemClass("res/new_project.png", "New Project") {
+		ItemClass new_project = new ItemClass("res/menu/new_project.png", "New Project") {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				//Add project

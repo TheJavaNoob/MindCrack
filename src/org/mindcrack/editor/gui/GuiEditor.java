@@ -13,7 +13,7 @@ public class GuiEditor extends MPanel {
 	public GuiEditor(File file) {
 		filename = file.getName();
 //		System.out.println();
-		this.icon = new ImageIcon("res/" + filename.substring(filename.lastIndexOf('.') + 1, filename.length()) + ".png");
+		this.icon = new ImageIcon("res/filetype" + filename.substring(filename.lastIndexOf('.') + 1, filename.length()) + ".png");
 		this.name = filename;
 	}
 }
