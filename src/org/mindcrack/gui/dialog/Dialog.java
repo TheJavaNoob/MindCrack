@@ -24,7 +24,7 @@ public abstract class Dialog extends JDialog {
 	}													
 	public void initDialog() {
       	this.setSize(500,600);
-      	this.setLocation(450,450);
+      	this.setLocationRelativeTo(null);
 		this.setLayout(new BorderLayout());
 		top = new JPanel();
 			top.setLayout(null);
@@ -32,7 +32,7 @@ public abstract class Dialog extends JDialog {
 		bottom = new JPanel();
 		bottom.setLayout(new FlowLayout(FlowLayout.RIGHT));
       	bottom.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.gray));
-			done = new JButton("完成");
+			done = new JButton("Done");
 				done.addMouseListener(new MouseAdapter(){
 					@Override
 					public void mouseClicked(MouseEvent e){
@@ -40,14 +40,14 @@ public abstract class Dialog extends JDialog {
                     }
 				});
 			bottom.add(done);
-      		done = new JButton("取消");
-				done.addMouseListener(new MouseAdapter(){
+      		cancel = new JButton("Cancel");
+      			cancel.addMouseListener(new MouseAdapter(){
 					@Override
 					public void mouseClicked(MouseEvent e){
                       Dialog.this.dispose();
                     }
 				});
-			bottom.add(done);
+			bottom.add(cancel);
 		add(bottom, BorderLayout.SOUTH);
 	}
   	public abstract void onDone();

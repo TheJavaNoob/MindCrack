@@ -2,11 +2,10 @@ package org.mindcrack.gui;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -43,6 +42,7 @@ public class Padder extends JPanel {
 	Point origin_win;
 	/** This is for a bug fixing where componentResized can only be called once */
 	boolean init = false;
+	protected Tab selected;
 	public Padder(){
 		containers = new LinkedList<JPanel>();
 		origin = new Point();
@@ -282,7 +282,6 @@ public class Padder extends JPanel {
 		}
 		if(body == null) {
 			body = new JPanel();
-			System.out.println("New");
 		}
 		{
 			body.setLayout(null);
@@ -351,7 +350,6 @@ public class Padder extends JPanel {
 							else//Staying
 								finX = Main.main_win.getWidth();
 						}else if(Math.abs(currX - Main.main_win.getWidth()) < limit) {//Entering
-							System.out.println(21);
 							finX = Main.main_win.getWidth();
 						}
 						for(Padder padder:Main.main_win.padders) {
@@ -463,7 +461,7 @@ public class Padder extends JPanel {
 			}
 		});
 	}
-	void addTab(MPanel panel) {
+	public void addTab(MPanel panel) {
 		Tab tab = new Tab(panel);
 		tabs.add(tab);
 		head.add(tab);
@@ -473,38 +471,55 @@ public class Padder extends JPanel {
 		JLabel icon;
 		JLabel name;
 		JLabel close;
+		boolean selected;
 		public Tab(MPanel panel) {
 			body = panel;
 			initPanel();
 		}
 		void initPanel() {
-			this.setSize(180,40);
+			this.setOpaque(false);
 			this.setLayout(null);
-			icon = new JLabel(body.icon);{
+			selected = (tabs.size() == 0);
+			icon = new JLabel(body.icon);
 				icon.setBounds(10, 10, 20, 20);
-				add(icon);
-			}
-			name = new JLabel(body.name);{
-				name.setBounds(40, 5, 100, 30);
-				add(name);
-			}
-			close = new JLabel(new ImageIcon("res/close.png"));{
-				close.setBounds(140, 10, 20, 20);
-				add(close);
-			}
+			add(icon);
+			name = new JLabel(body.name);
+				FontMetrics fm = name.getFontMetrics(name.getFont());
+				name.setBounds(40, 5, fm.charWidth('z') * body.name.length(), 30);
+			add(name);
+			close = new JLabel(new ImageIcon("res/close.png"));
+				close.setBounds(name.getWidth() + 10, 10, 20, 20);
+				close.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						
+					}
+				});
+			add(close);
+			this.setSize(name.getWidth() + 80,40);
+			this.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					Padder.this.body = Tab.this.body;
+					Padder.this.selected = Tab.this;
+					Tab.this.selected = true;
+					repaint();
+				}
+			});
 		}
 		@Override
 		public void paint(Graphics g1) {
 			Graphics2D g = (Graphics2D) g1;
-	        g.setColor(Color.white);
+			if(selected) {
+				g.setColor(Color.white);
+			}else {
+		        GradientPaint paint = new GradientPaint(0, 0, new Color(50,255,50), 0, 40,
+		                new Color(200, 255, 200));
+		        g.setPaint(paint);
+		    }
 	        g.fillRoundRect(0,0,getWidth(),getHeight(),20,20);
 	        g.fillRect(-5, 35, 185, 5);
-	        //
-	        Image image = body.icon.getImage();
-	        g.drawImage(image, 5, 10, 20, 20, null);
-	        g.setColor(Color.black);
-	        g.setFont(new Font("arial", Font.PLAIN, 15));
-	        g.drawString("Hello", 30, 25);
+	        super.paint(g1);
 	    }
 	}
 }

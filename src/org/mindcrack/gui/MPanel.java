@@ -7,4 +7,8 @@ import javax.swing.JPanel;
 public class MPanel extends JPanel {
 	public String name;
 	public ImageIcon icon;
+	@Override
+	public String toString() {
+		return name;
+	}
 }

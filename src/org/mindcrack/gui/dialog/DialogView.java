@@ -1,6 +1,7 @@
 package org.mindcrack.gui.dialog;
 
-import java.util.Enumeration;
+import java.awt.Color;
+import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -12,12 +13,17 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.mindcrack.editor.gui.GuiEditor;
+import org.mindcrack.gui.MPanel;
 import org.mindcrack.gui.Padder;
+import org.mindcrack.gui.WindowManager;
+import org.mindcrack.main.Main;
 
 @SuppressWarnings("serial")
 public class DialogView extends Dialog {
@@ -26,31 +32,38 @@ public class DialogView extends Dialog {
 	DefaultTreeModel model;
 	DefaultTreeModel currModel;
 	DefaultMutableTreeNode newRoot;
+	boolean enabled;
 
 	public DialogView() {
 		super("IDE View", true);
+		this.setResizable(false);
 		done.setText("Add");
+		done.setForeground(Color.gray);
+		enabled = false;
 		list = new JTree();
-		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			SwingUtilities.updateComponentTreeUI(list);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		list.setBounds(10, 40, 460, 450);
-		list.addTreeSelectionListener(new TreeSelectionListener() {
-			@Override
-			public void valueChanged(TreeSelectionEvent e) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) list.getLastSelectedPathComponent();
-				if (node != null && node.isLeaf()) {
-					done.setEnabled(true);
-				} else {
-					done.setEnabled(false);
-				}
+			try {
+				UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+				SwingUtilities.updateComponentTreeUI(list);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		});
-		list.setRootVisible(false);
-		loadList();
+			list.setBounds(10, 40, 460, 450);
+			list.addTreeSelectionListener(new TreeSelectionListener() {
+				@Override
+				public void valueChanged(TreeSelectionEvent e) {
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) list.getLastSelectedPathComponent();
+					if (node != null && node.isLeaf()) {
+						enabled = true;
+						done.setForeground(Color.BLACK);
+					} else {
+						enabled = false;
+						done.setForeground(Color.GRAY);
+					}
+				}
+			});
+			list.setRootVisible(false);
+			list.setCellRenderer(new Renderer());
+			loadList();
 		top.add(list);
 		search = new JTextField();
 		search.setBounds(60, 10, 410, 20);
@@ -63,23 +76,36 @@ public class DialogView extends Dialog {
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				currModel = new DefaultTreeModel(newRoot = new DefaultMutableTreeNode());
+//				list.setModel(currModel);
 				if (search.getText() != "") {
 					filter((TreeNode) model.getRoot(), search.getText());
 				}else {
+					System.out.println("AAAAA");
 					currModel = model;
 				}
 				list.setModel(currModel);
+//				System.out.println(((DefaultMutableTreeNode)model.getChild(model.getRoot(), 0)).getChildCount());
+				for(int i = 0; i < list.getRowCount(); i++) {
+					if(!((DefaultMutableTreeNode)list.getPathForRow(i).getLastPathComponent()).isLeaf())
+						list.expandRow(i);
+				}
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				currModel = new DefaultTreeModel(newRoot = new DefaultMutableTreeNode());
-				if (search.getText() != "") {
+//				list.setModel(currModel);
+				if (!search.getText().equals("")) {
 					filter((TreeNode) model.getRoot(), search.getText());
 				}else {
 					currModel = model;
 				}
 				list.setModel(currModel);
+//				System.out.println(((DefaultMutableTreeNode)model.getChild(model.getRoot(), 0)).getChildCount());
+				for(int i = 0; i < list.getRowCount(); i++) {
+					if(!((DefaultMutableTreeNode)list.getPathForRow(i).getLastPathComponent()).isLeaf())
+						list.expandRow(i);
+				}
 			}
 		});
 		top.add(search);
@@ -89,29 +115,25 @@ public class DialogView extends Dialog {
 	}
 
 	public void loadList() {
-		String[] a = new String[] {"Hello", "Thank", "You", "Very", "Much"};
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-		model = new DefaultTreeModel(root);
-		for (int i = 0; i < 5; i++) {
-			DefaultMutableTreeNode folder = new DefaultMutableTreeNode("Source " + new Integer(i).toString());
-			for (int j = 0; j < 5; j++) {
-				DefaultMutableTreeNode item;
-				if(i == 2 && j == 2)
-					item = new DefaultMutableTreeNode("ZYH");
-				else
-					item = new DefaultMutableTreeNode(a[j]);
-				folder.add(item);
+		for(WindowManager wm: WindowManager.mods) {
+			for (WindowManager.Folder f: wm.folders.values()) {
+				DefaultMutableTreeNode folder = new DefaultMutableTreeNode(f.name);
+				System.out.println(f.windows.size());
+				for (MPanel mp: f.windows) {
+					DefaultMutableTreeNode item = new DefaultMutableTreeNode(mp);
+					folder.add(item);
+				}
+				root.add(folder);
 			}
-			root.add(folder);
 		}
 		model = new DefaultTreeModel(root);
 		list.setModel(model);
 	}
 
-	public boolean filter(TreeNode node, String x) {
+	public void filter(TreeNode node, String x) {
 		boolean added = false;
 		DefaultMutableTreeNode parent = new DefaultMutableTreeNode();
-//		System.out.println(node.getChildCount());
 		for (int i = 0; i < node.getChildCount(); i++) {
 			DefaultMutableTreeNode curr = (DefaultMutableTreeNode) node.getChildAt(i);
 			if (curr.isLeaf()) {
@@ -121,21 +143,53 @@ public class DialogView extends Dialog {
 						parent = new DefaultMutableTreeNode(((DefaultMutableTreeNode) curr.getParent()).getUserObject());
 						currModel.insertNodeInto((MutableTreeNode) parent, (MutableTreeNode) currModel.getRoot(), 0);
 						TreePath path = new TreePath(currModel.getPathToRoot(parent));
-						list.setSelectionPath(path);
-//						list.expandPath(path);
+						list.expandPath(path);
 					}
-					parent.add(curr);
+					parent.add(new DefaultMutableTreeNode(curr.getUserObject()));
 				}
 			}else {
 				filter(curr, x);
 			}
 		}
-		return rootPaneCheckingEnabled;
 	}
 
 	@Override
 	public void onDone() {
-		Padder padder = new Padder();
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) list.getLastSelectedPathComponent();
+		if(!enabled)return;
+		try {
+			DefaultMutableTreeNode node = ((DefaultMutableTreeNode)list.getLastSelectedPathComponent());
+			MPanel panel = (MPanel)node.getUserObject().getClass().newInstance();
+			Padder padder = new Padder();
+			padder.addTab(panel);
+			padder.setBounds(0,0,300,300);
+			Main.main_win.mainPanel.add(padder);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	class Renderer extends DefaultTreeCellRenderer {    
+	    @Override    
+	    public Component getTreeCellRendererComponent(JTree tree, Object value,    
+	            boolean sel, boolean expanded, boolean leaf, int row,    
+	            boolean hasFocus)    
+	    {     
+	        super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf,    
+	                row, hasFocus);
+	        setText(value.toString());   
+	        if (sel)    
+	        {    
+	            setForeground(getTextSelectionColor());    
+	        }    
+	        else    
+	        {    
+	            setForeground(getTextNonSelectionColor());    
+	        }
+	        if(leaf) {
+	        	DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+	        	this.setIcon(((GuiEditor)node.getUserObject()).icon);
+			
+	        }
+	        return this;
+		}
 	}
 }
