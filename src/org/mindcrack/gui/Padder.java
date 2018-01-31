@@ -492,7 +492,6 @@ public class Padder extends JPanel {
 				close.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						
 					}
 				});
 			add(close);

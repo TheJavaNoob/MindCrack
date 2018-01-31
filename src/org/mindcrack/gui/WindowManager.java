@@ -3,7 +3,7 @@ package org.mindcrack.gui;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class WindowManager {
+public abstract class WindowManager {
 	public static LinkedList<WindowManager> mods = new LinkedList<WindowManager>();
 	public HashMap<String, Folder> folders = new HashMap<String, Folder>();
 	public static class Folder {

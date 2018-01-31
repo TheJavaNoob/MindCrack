@@ -11,6 +11,7 @@ import org.mindcrack.main.Main;
 public class Project {
 	public static Project instance;
 	public String name;
+	public String path;
 	public Project() {
 		instance = this;
 	}
@@ -30,6 +31,7 @@ public class Project {
 	}
 	public static Project load(String path) {
 		Project ret = new Project();
+		ret.path = path;
 		File pf = new File(path + "/.mcproject");
 		try {
 			Scanner s = new Scanner(new FileInputStream(pf));

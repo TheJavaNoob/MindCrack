@@ -14,12 +14,11 @@ public class Main {
 	public static LoadingWin loading_win;
 	public static MindcrackWindowManager wm;
 	public static void main(String[] args){
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-				
-//			}
-//		});
+//		try {
+//			new File("TestProject/.mcproject").createNewFile();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		loading_win = new LoadingWin();
 		wm = new MindcrackWindowManager();
 	}

@@ -14,14 +14,14 @@ public class Configurations {
 	public static int mainwin_top;
 	public static int mainwin_left;
 	public static int padder_align_min;
-	public static String projectOpened;
+	public static String project_opened = "";
 	public Configurations(){
 		loadConfigurations();
 		loadProject();
 	}
 	void loadProject() {
-		if(projectOpened == "") {
-			Project.instance = Project.load(projectOpened);
+		if(!project_opened.equals("")) {
+			Project.instance = Project.load(project_opened);
 		}
 	}
 	public void loadConfigurations(){

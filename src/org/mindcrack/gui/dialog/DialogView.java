@@ -1,7 +1,6 @@
 package org.mindcrack.gui.dialog;
 
 import java.awt.Color;
-import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -13,16 +12,15 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.mindcrack.editor.gui.GuiEditor;
 import org.mindcrack.gui.MPanel;
 import org.mindcrack.gui.Padder;
 import org.mindcrack.gui.WindowManager;
+import org.mindcrack.gui.widget.CustomTree;
 import org.mindcrack.main.Main;
 
 @SuppressWarnings("serial")
@@ -40,7 +38,7 @@ public class DialogView extends Dialog {
 		done.setText("Add");
 		done.setForeground(Color.gray);
 		enabled = false;
-		list = new JTree();
+		list = new CustomTree();
 			try {
 				UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 				SwingUtilities.updateComponentTreeUI(list);
@@ -62,7 +60,6 @@ public class DialogView extends Dialog {
 				}
 			});
 			list.setRootVisible(false);
-			list.setCellRenderer(new Renderer());
 			loadList();
 		top.add(list);
 		search = new JTextField();
@@ -80,7 +77,6 @@ public class DialogView extends Dialog {
 				if (search.getText() != "") {
 					filter((TreeNode) model.getRoot(), search.getText());
 				}else {
-					System.out.println("AAAAA");
 					currModel = model;
 				}
 				list.setModel(currModel);
@@ -118,10 +114,11 @@ public class DialogView extends Dialog {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 		for(WindowManager wm: WindowManager.mods) {
 			for (WindowManager.Folder f: wm.folders.values()) {
-				DefaultMutableTreeNode folder = new DefaultMutableTreeNode(f.name);
+				CustomTree.CustomMutableTreeNode folder = new CustomTree.CustomMutableTreeNode(f.name);
 				System.out.println(f.windows.size());
 				for (MPanel mp: f.windows) {
-					DefaultMutableTreeNode item = new DefaultMutableTreeNode(mp);
+					CustomTree.CustomMutableTreeNode item = new CustomTree.CustomMutableTreeNode(mp);
+					item.icon = mp.icon;
 					folder.add(item);
 				}
 				root.add(folder);
@@ -140,12 +137,12 @@ public class DialogView extends Dialog {
 				if(curr.getUserObject().toString().indexOf(x) != -1) {
 					if (!added) {
 						added = true;
-						parent = new DefaultMutableTreeNode(((DefaultMutableTreeNode) curr.getParent()).getUserObject());
-						currModel.insertNodeInto((MutableTreeNode) parent, (MutableTreeNode) currModel.getRoot(), 0);
+						parent = new CustomTree.CustomMutableTreeNode(((DefaultMutableTreeNode) curr.getParent()).getUserObject());
+						currModel.insertNodeInto((CustomTree.CustomMutableTreeNode) parent, (MutableTreeNode) currModel.getRoot(), 0);
 						TreePath path = new TreePath(currModel.getPathToRoot(parent));
 						list.expandPath(path);
 					}
-					parent.add(new DefaultMutableTreeNode(curr.getUserObject()));
+					parent.add(new CustomTree.CustomMutableTreeNode(curr.getUserObject()));
 				}
 			}else {
 				filter(curr, x);
@@ -167,29 +164,5 @@ public class DialogView extends Dialog {
 			e.printStackTrace();
 		}
 	}
-	class Renderer extends DefaultTreeCellRenderer {    
-	    @Override    
-	    public Component getTreeCellRendererComponent(JTree tree, Object value,    
-	            boolean sel, boolean expanded, boolean leaf, int row,    
-	            boolean hasFocus)    
-	    {     
-	        super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf,    
-	                row, hasFocus);
-	        setText(value.toString());   
-	        if (sel)    
-	        {    
-	            setForeground(getTextSelectionColor());    
-	        }    
-	        else    
-	        {    
-	            setForeground(getTextNonSelectionColor());    
-	        }
-	        if(leaf) {
-	        	DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-	        	this.setIcon(((GuiEditor)node.getUserObject()).icon);
-			
-	        }
-	        return this;
-		}
-	}
+	
 }
