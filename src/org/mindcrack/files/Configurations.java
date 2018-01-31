@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.Scanner;
 
 import org.mindcrack.main.Main;
+import org.mindcrack.project.Project;
 
 
 public class Configurations {
@@ -13,11 +14,17 @@ public class Configurations {
 	public static int mainwin_top;
 	public static int mainwin_left;
 	public static int padder_align_min;
+	public static String projectOpened;
 	public Configurations(){
-		LoadConfigurations();
+		loadConfigurations();
+		loadProject();
 	}
-	public void LoadConfigurations(){
-		
+	void loadProject() {
+		if(projectOpened == "") {
+			Project.instance = Project.load(projectOpened);
+		}
+	}
+	public void loadConfigurations(){
 		FileInputStream fin;
 		try {
 			fin = new FileInputStream("res/configurations");

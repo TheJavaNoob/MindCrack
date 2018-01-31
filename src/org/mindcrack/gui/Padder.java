@@ -488,7 +488,7 @@ public class Padder extends JPanel {
 				name.setBounds(40, 5, fm.charWidth('z') * body.name.length(), 30);
 			add(name);
 			close = new JLabel(new ImageIcon("res/close.png"));
-				close.setBounds(name.getWidth() + 10, 10, 20, 20);
+				close.setBounds(name.getWidth() + 40, 10, 20, 20);
 				close.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {

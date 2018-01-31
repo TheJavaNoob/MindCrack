@@ -1,5 +1,8 @@
 package org.mindcrack.main;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.mindcrack.files.Configurations;
 import org.mindcrack.gui.LoadingWin;
 import org.mindcrack.gui.MainWin;

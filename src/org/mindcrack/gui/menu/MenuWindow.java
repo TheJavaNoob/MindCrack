@@ -3,11 +3,11 @@ package org.mindcrack.gui.menu;
 import org.mindcrack.gui.dialog.DialogView;
 
 @SuppressWarnings("serial")
-public class Window extends MenuClass {
+public class MenuWindow extends MenuClass {
 	ItemClass window;
 	ItemClass toolbar;
 	DialogView dialog_view;
-	public Window() {
+	public MenuWindow() {
 		super("Window");
 	}
 

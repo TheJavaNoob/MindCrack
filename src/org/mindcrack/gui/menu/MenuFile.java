@@ -1,8 +1,8 @@
 package org.mindcrack.gui.menu;
 
 @SuppressWarnings("serial")
-public class File extends MenuClass {
-	public File() {
+public class MenuFile extends MenuClass {
+	public MenuFile() {
 		super("File");
 	}
 	@Override
