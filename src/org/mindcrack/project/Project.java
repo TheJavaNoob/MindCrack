@@ -6,14 +6,17 @@ import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.util.Scanner;
 
+import org.mindcrack.files.ProjectFiles;
 import org.mindcrack.main.Main;
 
 public class Project {
 	public static Project instance;
+	public ProjectFiles files;
 	public String name;
 	public String path;
 	public Project() {
 		instance = this;
+		files = new ProjectFiles();
 	}
 	public Project(String path, String name) {
 		try {

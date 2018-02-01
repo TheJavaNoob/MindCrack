@@ -31,7 +31,6 @@ public class DialogView extends Dialog {
 	DefaultTreeModel currModel;
 	DefaultMutableTreeNode newRoot;
 	boolean enabled;
-
 	public DialogView() {
 		super("IDE View", true);
 		this.setResizable(false);
@@ -115,7 +114,6 @@ public class DialogView extends Dialog {
 		for(WindowManager wm: WindowManager.mods) {
 			for (WindowManager.Folder f: wm.folders.values()) {
 				CustomTree.CustomMutableTreeNode folder = new CustomTree.CustomMutableTreeNode(f.name);
-				System.out.println(f.windows.size());
 				for (MPanel mp: f.windows) {
 					CustomTree.CustomMutableTreeNode item = new CustomTree.CustomMutableTreeNode(mp);
 					item.icon = mp.icon;

@@ -10,12 +10,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+/** 
+ * Declaring the item in a {@link Toolkit}
+ */
 @SuppressWarnings("serial")
 public abstract class Toolbar_Item extends JPanel {
 	public JLabel main;
 	public JLabel expand;
 	public JPopupMenu menu;
-	public Toolbar_Item(String image, String tooltip, boolean hasSubItems) {
+	boolean menuEnabled;
+	public String img;
+	/**
+	 * Initialize the {@linkplain Toolbar_Item Toolbar Item} with a image filename and a tooltip text
+	 * @param image - The <b>filename</b> of image, <b>without</b> the suffix
+	 * @param tooltip - The text shown while the mouse is above the item 
+	 * @param hasMenu - Whether this item has a pop-up menu beside it or not 
+	 */
+	public Toolbar_Item(String image, String tooltip, boolean hasMenu) {
 		this.setBackground(new Color(150,255,150));
 		this.setOpaque(false);
 		this.setToolTipText(tooltip);
@@ -31,17 +42,23 @@ public abstract class Toolbar_Item extends JPanel {
 				Toolbar_Item.this.setOpaque(false);
 			}
 		});
-		main = new JLabel(new ImageIcon(image));
+		img = image;
+		main = new JLabel(new ImageIcon("res/toolbar/" + img + ".png"));
 			main.setBounds(0, 10, 20, 20);
 			main.setOpaque(false);
 			main.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					click();
+					if(menuEnabled)
+						click();
+					if(menuEnabled)
+						main.setIcon(new ImageIcon("res/toolbar/" + img + ".png"));
+					else
+						main.setIcon(new ImageIcon("res/toolbar/" + img + "_disabled.png"));
 				}
 			});
 		add(main);
-		if(hasSubItems) {
+		if(hasMenu) {
 			expand = new JLabel(new ImageIcon("res/toolbar/arrow_down.png"));
 			expand.setOpaque(false);
 				expand.setBounds(20, 10, 20, 20);
@@ -66,7 +83,13 @@ public abstract class Toolbar_Item extends JPanel {
 			}
 		});
 	}
+	/** Called when the <b>main button (not the menu)</b> is clicked */
 	public abstract void click();
-	public void addSubItems() {
+	/** 
+	 * Add the menu items to the pop-up menu (if exists), add JMenuItems into the {@code menu} field.<br>
+	 * <b>Note:</b> Only override it when {@code hasMenuItem} is true.
+	 * 
+	 */
+	public void addMenuItems() {
 	}
 }

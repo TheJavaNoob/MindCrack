@@ -2,6 +2,7 @@ package org.mindcrack.gui;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -77,7 +78,7 @@ public class Padder extends JPanel {
 		};{
 			
 			head.setLayout(null);
-			head.setBounds(0, 0, this.getWidth(), 40);
+			head.setPreferredSize(new Dimension(0,40));
 			head.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
@@ -85,6 +86,7 @@ public class Padder extends JPanel {
 					origin.y = e.getY();
 					origin_win.x = e.getX() + Padder.this.getX();
 					origin_win.y = e.getY() + Padder.this.getY();
+					Main.main_win.setComponentZOrder(Padder.this, 0);
 				} 
 			});
 			head.addMouseMotionListener(new MouseMotionAdapter() {
@@ -115,7 +117,7 @@ public class Padder extends JPanel {
 					int limit = Configurations.padder_align_min;
 					boolean clip_l = stdL < limit,
 							clip_r = Main.main_win.getWidth() - stdR < limit,
-							clip_u = stdT < limit,
+							clip_u = stdT - Toolbar.toolbars.size() * 40 < limit,
 							clip_d = Main.main_win.getHeight() - stdD < limit;
 					//Deal with edge clipping
 					if(stdL == 0) {//Left clipped, Checking leaving phase
@@ -140,14 +142,14 @@ public class Padder extends JPanel {
 						origin_win.x = e.getX() + stdL;
 						clip_state = 0;
 					}
-					if(stdT == 0) {//Leaving top
-						if(e.getY() - origin_win.y > limit)
+					if(stdT == Toolbar.toolbars.size() * 40) {//Leaving top
+						if(e.getY() - origin_win.y - Toolbar.toolbars.size() * 40 > limit)
 							finY = e.getY() - origin_win.y;
 						else
-							finY = 0;
+							finY = Toolbar.toolbars.size() * 40;
 						clip_state = 0;
 					}else if(clip_u){//Entering top
-						finY = 0;
+						finY = Toolbar.toolbars.size() * 40;
 						origin_win.y = e.getY();
 						clip_state = 0;
 					}
@@ -273,18 +275,11 @@ public class Padder extends JPanel {
 				head.add(control);
 			}
 			add(head);
-			head.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mousePressed(MouseEvent arg0) {
-//					Main.main_win.setComponentZOrder(Padder.this, 0);
-				}
-			});
 		}
 		if(body == null) {
 			body = new JPanel();
 		}
 		{
-			body.setLayout(null);
 			body.setLocation(0, 40);
 			left_comp = new JLabel();{
 				left_comp.addMouseMotionListener(new MouseMotionAdapter() {
@@ -331,7 +326,7 @@ public class Padder extends JPanel {
 						Padder.this.setLocation(finX, Padder.this.getY());
 					}
 				});
-				left_comp.setSize(2, 0);
+				left_comp.setPreferredSize(new Dimension(2, 0));
 				left_comp.setOpaque(false);
 				left_comp.setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
 				add(left_comp);
@@ -381,7 +376,7 @@ public class Padder extends JPanel {
 //						Padder.this.setLocation(finX, Padder.this.getY());
 					}
 				});
-				right_comp.setSize(2, 0);
+				right_comp.setPreferredSize(new Dimension(2, 0));
 				right_comp.setOpaque(false);
 				right_comp.setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
 				add(right_comp);
@@ -428,12 +423,11 @@ public class Padder extends JPanel {
 								}
 							}
 						}
-						
 						Padder.this.setSize(Padder.this.getWidth(), finY - Padder.this.getY() - 32);
 						down_comp.setLocation(0, Padder.this.getHeight() - 2);
 					}
 				});
-				down_comp.setSize(0, 2);
+				down_comp.setPreferredSize(new Dimension(0, 2));
 				down_comp.setOpaque(false);
 				down_comp.setCursor(new Cursor(Cursor.N_RESIZE_CURSOR));
 				add(down_comp);
@@ -454,12 +448,12 @@ public class Padder extends JPanel {
 			    down_comp.setBounds(0, height - 2, width, 2);
 			}
 		});
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				head.repaint();
-			}
-		});
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				head.repaint();
+//			}
+//		});
 	}
 	public void addTab(MPanel panel) {
 		Tab tab = new Tab(panel);
@@ -473,13 +467,18 @@ public class Padder extends JPanel {
 		JLabel close;
 		boolean selected;
 		public Tab(MPanel panel) {
-			body = panel;
+			Tab.this.body = panel;
 			initPanel();
 		}
 		void initPanel() {
 			this.setOpaque(false);
 			this.setLayout(null);
-			selected = (tabs.size() == 0);
+			if(tabs.size() == 0) {
+				Padder.this.body = Tab.this.body;
+				Padder.this.selected = Tab.this;
+				Tab.this.selected = true;
+				repaint();
+			}
 			icon = new JLabel(body.icon);
 				icon.setBounds(10, 10, 20, 20);
 			add(icon);
@@ -500,6 +499,7 @@ public class Padder extends JPanel {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					Padder.this.body = Tab.this.body;
+					Padder.this.add(Padder.this.body);
 					Padder.this.selected = Tab.this;
 					Tab.this.selected = true;
 					repaint();

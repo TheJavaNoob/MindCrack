@@ -16,7 +16,8 @@ public class MenuWindow extends MenuClass {
 		window = new ItemClass("res/menu/show.png", "Show Window") {
 			@Override
 			public void click() {
-				dialog_view = new DialogView();
+				if(dialog_view == null)
+					dialog_view = new DialogView();
 				dialog_view.setVisible(true);
 			}
 		};

@@ -12,11 +12,19 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/** Base class of a {@link Dialog} that has multiple steps */
 @SuppressWarnings("serial")
 public abstract class DialogGuide extends Dialog {
+	/** A list of all the steps in the dialog */
   	public LinkedList<SPanel> steps = new LinkedList<SPanel>();
+  	/** The current step */
   	public int step;
+  	/** Buttons to go the next and previous step */
   	public JButton next, prev;
+  	/** 
+  	 * Initialize the dialog with a title
+  	 * @param title - The title of the dialog
+  	 */
   	public DialogGuide(String title) {
       	super(title, true);
       	step = 0;
@@ -31,11 +39,13 @@ public abstract class DialogGuide extends Dialog {
       	bottom.add(prev);
       	done.setText("ÏÂÒ»²½>");
     }
+  	/** A base class of the panel of each step */
 	class SPanel extends JPanel {
       	JPanel top;
       	JPanel body;
     	JLabel ins;
     	ImageIcon img;
+    	/** Initialize the panel with a top image and a instruction */
 		public SPanel(String image, String instruction) {
           	this.setLayout(new BorderLayout());
           	img = new ImageIcon(image);

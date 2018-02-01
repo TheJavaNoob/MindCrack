@@ -12,7 +12,7 @@ public class Run extends Toolbar_Item {
 		//TODO Click run toolbar
 	}
 	@Override
-	public void addSubItems() {
+	public void addMenuItems() {
 		//TODO Selector & reading configurations
 		//DEBUGGING!
 		JMenuItem test = new JMenuItem("Temp");

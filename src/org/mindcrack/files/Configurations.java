@@ -9,21 +9,29 @@ import org.mindcrack.project.Project;
 
 
 public class Configurations {
+	/** Width of main window */
 	public static int mainwin_width;
+	/** Height of main window */
 	public static int mainwin_height;
+	/** Y of main window */
 	public static int mainwin_top;
+	/** X of main window */
 	public static int mainwin_left;
+	/** Min gap (in pixels) to be allowed between {@link org.mindcrack.gui.Padder Padders} before they align together */
 	public static int padder_align_min;
+	/** The path to the current project */
 	public static String project_opened = "";
 	public Configurations(){
 		loadConfigurations();
 		loadProject();
 	}
+	/** Load the project in {@code project_opened} */
 	void loadProject() {
 		if(!project_opened.equals("")) {
 			Project.instance = Project.load(project_opened);
 		}
 	}
+	/** Load the configuration file */
 	public void loadConfigurations(){
 		FileInputStream fin;
 		try {
