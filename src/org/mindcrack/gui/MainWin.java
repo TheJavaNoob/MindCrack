@@ -42,6 +42,9 @@ public class MainWin extends JFrame {
 		this.setJMenuBar(menu = new Menu());
 		addMenu();
 		mainPanel.add(new Toolbar());
+		Padder p = new Padder();
+		p.setBounds(0, 40, 300, 300);
+		mainPanel.add(p);
 	}
 	public void addMenu() {
 		mainPanel.add(menu.file.show);

@@ -142,8 +142,9 @@ public class Padder extends JPanel {
 						origin_win.x = e.getX() + stdL;
 						clip_state = 0;
 					}
+					System.out.println(stdT - Toolbar.toolbars.size() * 40);
 					if(stdT == Toolbar.toolbars.size() * 40) {//Leaving top
-						if(e.getY() - origin_win.y - Toolbar.toolbars.size() * 40 > limit)
+						if(e.getY() - origin_win.y > limit)
 							finY = e.getY() - origin_win.y;
 						else
 							finY = Toolbar.toolbars.size() * 40;
@@ -278,6 +279,7 @@ public class Padder extends JPanel {
 		}
 		if(body == null) {
 			body = new JPanel();
+			body.setBackground(Color.red);
 		}
 		{
 			body.setLocation(0, 40);

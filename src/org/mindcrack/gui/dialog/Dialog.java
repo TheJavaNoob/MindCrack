@@ -16,13 +16,13 @@ import org.mindcrack.main.Main;
 @SuppressWarnings("serial")
 public abstract class Dialog extends JDialog {
 	/** Done button */
-	JButton done;
+	public JButton done;
 	/** Cancel button */
-	JButton cancel;
+	public JButton cancel;
 	/** The button panel */
-	JPanel bottom;
+	public JPanel bottom;
 	/** The top panel */
-	JPanel top;
+	public JPanel top;
 	/** Initialize the dialog with a title
 	 * @param title - The title of the dialog
 	 * @param modal - Whether the user can operate the main window when the dialog is shown

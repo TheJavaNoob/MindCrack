@@ -2,6 +2,7 @@ package org.mindcrack.files;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 import org.mindcrack.main.Main;
@@ -21,7 +22,10 @@ public class Configurations {
 	public static int padder_align_min;
 	/** The path to the current project */
 	public static String project_opened = "";
+	/** A list of file types to be shown in the add menu */
+	public static LinkedList<String> defaultAddItems;
 	public Configurations(){
+		defaultAddItems = new LinkedList<String>();
 		loadConfigurations();
 		loadProject();
 	}
@@ -40,15 +44,27 @@ public class Configurations {
 			Class<Configurations> configurations_class = Configurations.class;
 			while(scan.hasNext()){
 				String line = scan.nextLine();
-				String name = line.substring(0,line.indexOf("="));
-				String value = line.substring(line.indexOf("=") + 1);
-				Field field = configurations_class.getField(name);
-				String type = field.getType().toString();
-				field.setAccessible(true);
-				if(type.endsWith("String")){
-					field.set(Main.configurations, value);
-				}else{
-					field.set(Main.configurations, Integer.parseInt(value));
+				if(line.startsWith("@")) {
+					String item = line;
+					while(!item.equals("@@")){
+						switch(item.substring(1)) {
+							case "defaultAddItems":{
+								defaultAddItems.add(item);
+							}
+						}
+						item = scan.nextLine();
+					}
+				}else {
+					String name = line.substring(0,line.indexOf("="));
+					String value = line.substring(line.indexOf("=") + 1);
+					Field field = configurations_class.getField(name);
+					String type = field.getType().toString();
+					field.setAccessible(true);
+					if(type.endsWith("String")){
+						field.set(Main.configurations, value);
+					}else{
+						field.set(Main.configurations, Integer.parseInt(value));
+					}
 				}
 			}
 			scan.close();

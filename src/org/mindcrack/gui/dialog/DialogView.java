@@ -18,8 +18,10 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.mindcrack.gui.MPanel;
+import org.mindcrack.gui.MainWin;
 import org.mindcrack.gui.Padder;
 import org.mindcrack.gui.WindowManager;
+import org.mindcrack.gui.toolbar.Toolbar;
 import org.mindcrack.gui.widget.CustomTree;
 import org.mindcrack.main.Main;
 
@@ -156,7 +158,7 @@ public class DialogView extends Dialog {
 			MPanel panel = (MPanel)node.getUserObject().getClass().newInstance();
 			Padder padder = new Padder();
 			padder.addTab(panel);
-			padder.setBounds(0,0,300,300);
+			padder.setBounds(0, 40 * Toolbar.toolbars.size(), 300, 300);
 			Main.main_win.mainPanel.add(padder);
 		} catch (Exception e) {
 			e.printStackTrace();
