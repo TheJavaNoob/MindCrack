@@ -45,14 +45,13 @@ public class Configurations {
 			while(scan.hasNext()){
 				String line = scan.nextLine();
 				if(line.startsWith("@")) {
-					String item = line;
-					while(!item.equals("@@")){
+					String item;
+					while(!(item = scan.nextLine()).equals("@@")){
 						switch(item.substring(1)) {
 							case "defaultAddItems":{
 								defaultAddItems.add(item);
 							}
 						}
-						item = scan.nextLine();
 					}
 				}else {
 					String name = line.substring(0,line.indexOf("="));

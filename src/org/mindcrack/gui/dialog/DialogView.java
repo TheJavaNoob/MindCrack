@@ -2,6 +2,7 @@ package org.mindcrack.gui.dialog;
 
 import java.awt.Color;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -18,7 +19,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.mindcrack.gui.MPanel;
-import org.mindcrack.gui.MainWin;
 import org.mindcrack.gui.Padder;
 import org.mindcrack.gui.WindowManager;
 import org.mindcrack.gui.toolbar.Toolbar;
@@ -81,7 +81,6 @@ public class DialogView extends Dialog {
 					currModel = model;
 				}
 				list.setModel(currModel);
-//				System.out.println(((DefaultMutableTreeNode)model.getChild(model.getRoot(), 0)).getChildCount());
 				for(int i = 0; i < list.getRowCount(); i++) {
 					if(!((DefaultMutableTreeNode)list.getPathForRow(i).getLastPathComponent()).isLeaf())
 						list.expandRow(i);
@@ -98,7 +97,6 @@ public class DialogView extends Dialog {
 					currModel = model;
 				}
 				list.setModel(currModel);
-//				System.out.println(((DefaultMutableTreeNode)model.getChild(model.getRoot(), 0)).getChildCount());
 				for(int i = 0; i < list.getRowCount(); i++) {
 					if(!((DefaultMutableTreeNode)list.getPathForRow(i).getLastPathComponent()).isLeaf())
 						list.expandRow(i);

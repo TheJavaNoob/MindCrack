@@ -21,11 +21,11 @@ public class CustomTree extends JTree {
 		this.setCellRenderer(new Renderer());
 		this.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
             }
         });
 	}
-	class Renderer extends JPanel implements TreeCellRenderer, MouseListener {
+	class Renderer extends JPanel implements TreeCellRenderer {
 		JLabel switchComp;
 		DefaultMutableTreeNode node;
 		DefaultTreeCellRenderer def;
@@ -35,7 +35,24 @@ public class CustomTree extends JTree {
 			this.setOpaque(false);
 			def = new DefaultTreeCellRenderer();
 			this.setLayout(new BorderLayout());
-			this.addMouseListener(this);
+			this.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+//					System.out.println("CustomTree");
+//					int x = (int) e.getX();
+//		            int y = (int) e.getY();
+//		            TreePath path = getPathForLocation(x, y);
+//		            CustomMutableTreeNode node = (CustomMutableTreeNode) path.getLastPathComponent();
+//		            int locX = node.switchComp.getX(),
+//		            	locY = node.switchComp.getY();
+//		            if(x >= locX && x <= locX + node.switchComp.getWidth() &&
+//		            		y >= locY && y <= locY + node.switchComp.getHeight()) {
+//						boolean expanded = isExpanded(path);
+//						CustomTree.this.setExpandedState(path, !expanded);
+//						node.switchComp.setIcon(new ImageIcon(expanded?"res/switch_expanded.png": "res/switch_closed.png"));
+//		            }
+				}
+			});
 		}
 	    public void adapte(int x, int y) {
 	    	TreePath path = getPathForLocation(x, y);
@@ -51,7 +68,19 @@ public class CustomTree extends JTree {
         	switchComp.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					
+					System.out.println("From TreeCellRenderer");
+					int x = (int) e.getX();
+		            int y = (int) e.getY();
+		            TreePath path = getPathForLocation(x, y);
+		            CustomMutableTreeNode node = (CustomMutableTreeNode) path.getLastPathComponent();
+		            int locX = node.switchComp.getX(),
+		            	locY = node.switchComp.getY();
+		            if(x >= locX && x <= locX + node.switchComp.getWidth() &&
+		            		y >= locY && y <= locY + node.switchComp.getHeight()) {
+						boolean expanded = isExpanded(path);
+						CustomTree.this.setExpandedState(path, !expanded);
+						node.switchComp.setIcon(new ImageIcon(expanded?"res/switch_expanded.png": "res/switch_closed.png"));
+		            }
 				}
 			});
         	add(switchComp, BorderLayout.WEST);
@@ -66,34 +95,6 @@ public class CustomTree extends JTree {
 	        }
 	        add(main, BorderLayout.EAST);
 	        return this;
-		}
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			System.out.println("AAAAAA");
-			int x = (int) e.getX();
-            int y = (int) e.getY();
-            TreePath path = getPathForLocation(x, y);
-            CustomMutableTreeNode node = (CustomMutableTreeNode) path.getLastPathComponent();
-            int locX = node.switchComp.getX(),
-            	locY = node.switchComp.getY();
-            if(x >= locX && x <= locX + node.switchComp.getWidth() &&
-            		y >= locY && y <= locY + node.switchComp.getHeight()) {
-				boolean expanded = isExpanded(path);
-				CustomTree.this.setExpandedState(path, !expanded);
-				node.switchComp.setIcon(new ImageIcon(expanded?"res/switch_expanded.png": "res/switch_closed.png"));
-            }
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-		}
-		@Override
-		public void mousePressed(MouseEvent e) {
-		}
-		@Override
-		public void mouseReleased(MouseEvent e) {
 		}
 	}
 	public static class CustomMutableTreeNode extends DefaultMutableTreeNode {

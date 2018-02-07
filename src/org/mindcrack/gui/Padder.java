@@ -1,5 +1,6 @@
 package org.mindcrack.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -142,10 +143,9 @@ public class Padder extends JPanel {
 						origin_win.x = e.getX() + stdL;
 						clip_state = 0;
 					}
-					System.out.println(stdT - Toolbar.toolbars.size() * 40);
 					if(stdT == Toolbar.toolbars.size() * 40) {//Leaving top
 						if(e.getY() - origin_win.y > limit)
-							finY = e.getY() - origin_win.y;
+							finY = e.getY() - origin_win.y + Toolbar.toolbars.size() * 40;
 						else
 							finY = Toolbar.toolbars.size() * 40;
 						clip_state = 0;
@@ -167,7 +167,7 @@ public class Padder extends JPanel {
 					}
 					if(clip_state == 0) {
 						Padder.this.setLocation(finX, finY);
-//						return;
+						return;
 					}
 					for(Padder padder: Main.main_win.padders) {
 						if(padder.uuid == Padder.this.uuid)continue;
@@ -279,6 +279,7 @@ public class Padder extends JPanel {
 		}
 		if(body == null) {
 			body = new JPanel();
+			body.setLayout(new BorderLayout());
 			body.setBackground(Color.red);
 		}
 		{
@@ -435,7 +436,6 @@ public class Padder extends JPanel {
 				add(down_comp);
 			}
 			add(body);
-			body.setBackground(Color.WHITE);
 		}
 		this.addComponentListener(new ComponentAdapter(){
 			@Override public void componentResized(ComponentEvent e){
@@ -443,7 +443,7 @@ public class Padder extends JPanel {
 				int height = e.getComponent().getHeight();
 			    head.setSize(width, 40);
 			    control.setLocation(width - 30, 10);
-			    body.setSize(width, height - 40);
+			    body.setSize(width + 20, height - 40);
 			    head.repaint();
 			    left_comp.setBounds(0, 0, 2,height);
 			    right_comp.setBounds(width - 2, 0, 2,height);
@@ -476,7 +476,7 @@ public class Padder extends JPanel {
 			this.setOpaque(false);
 			this.setLayout(null);
 			if(tabs.size() == 0) {
-				Padder.this.body = Tab.this.body;
+				Padder.this.body.add(Tab.this.body, BorderLayout.CENTER);
 				Padder.this.selected = Tab.this;
 				Tab.this.selected = true;
 				repaint();
@@ -500,7 +500,8 @@ public class Padder extends JPanel {
 			this.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					Padder.this.body = Tab.this.body;
+					Padder.this.body.removeAll();
+					Padder.this.body.add(Tab.this.body, BorderLayout.CENTER);
 					Padder.this.add(Padder.this.body);
 					Padder.this.selected = Tab.this;
 					Tab.this.selected = true;
